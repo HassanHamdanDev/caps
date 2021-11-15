@@ -1,6 +1,7 @@
 'use strict';
 
-const events = require('../src/events/events')
+const PORT = process.env.PORT || 3000;
+const io = require('socket.io')(PORT);
 
 let data = {
     store: 'guava',
@@ -9,28 +10,33 @@ let data = {
     address: 'end alamood',
 }
 
-
-describe('Test events', () => {
+describe('socket.io', () => {
     let consoleSpy;
 
     beforeAll(() => {
         consoleSpy = jest.spyOn(console, 'log').mockImplementation();
     });
 
-    it('pickup event ', async () => {
-        events.emit('pickup', data);
+    it('connects the backend via socket.io ', async () => {
+        await io.on('connection', mySocket => {
+            expect(mySocket).toBeDefined();
+        });
+    });
+
+    it('pickup emit ', async () => {
+        io.emit('pickup', data);
         await consoleSpy();
         expect(consoleSpy).toHaveBeenCalled();
     });
 
-    it('in-transit event ', async () => {
-        events.emit('in-transit', data);
+    it('in-transit emit ', async () => {
+        io.emit('in-transit', data);
         await consoleSpy();
         expect(consoleSpy).toHaveBeenCalled();
     });
 
-    it('delivered event', async () => {
-        events.emit('deliveredEvent', data);
+    it('delivered emit', async () => {
+        io.emit('delivered', data);
         await consoleSpy();
         expect(consoleSpy).toHaveBeenCalled();
     });
@@ -38,7 +44,7 @@ describe('Test events', () => {
 
     afterAll((done) => {
         consoleSpy.mockRestore();
+        io.close();
         done();
     });
-
 });
