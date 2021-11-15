@@ -1,8 +1,12 @@
 'use strict';
 
-const events = require('../events');
+const io = require('socket.io-client');
 var faker = require('faker');
 
+
+const HOST = process.env.HOST || 'http://localhost:3000';
+
+const serverConnection = io.connect(HOST);
 
 let phonyData = {
     "store": "Guava",
@@ -11,16 +15,17 @@ let phonyData = {
     "address": faker.address.streetAddress()
 }
 
-events.on('deliveredVendor', deliveredVendor);
+serverConnection.on('delivered', deliveredVendor);
 
 function deliveredVendor(payload) {
     console.log('VENDOR: Thank you  for delivering', payload.phonyData.orderId);
-    events.emit('deliveredEvent', { phonyData: payload.phonyData });
+    console.log('VENDOR :', `Thank you ${payload.phonyData.customer}`);
 }
 
-setInterval(() => {
-console.log('===============================');
-events.emit('create-order', { phonyData });
-console.log('===============================');
-},2000);
+
+
+serverConnection.emit('newOrder', {phonyData});
+
+
+
 
