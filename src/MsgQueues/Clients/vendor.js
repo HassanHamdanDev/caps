@@ -28,10 +28,9 @@ socket.on("welcome", (data) => {
 socket.emit('flowersOrder', { flowersPhony });
 socket.emit('widgetsOrder', { widgetsPhony });
 
-socket.on('delivered', deliveredVendor);
+socket.on('delivered', (payload) => {
+    console.log('VENDOR: Thank you  for delivering');
+    console.log('VENDOR :', `Thank you `);
+});
 
-function deliveredVendor(payload) {
-    console.log('VENDOR: Thank you  for delivering', payload.info.orderId);
-    console.log('VENDOR :', `Thank you ${payload.info.customer}`);
-}
 

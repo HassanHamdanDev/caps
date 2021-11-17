@@ -27,23 +27,25 @@ caps.on("connection", (socket) => {
         };
         console.log('Event', log);
         caps.emit('pickup', { id: id, payload: flowersQueue.messeges[id] });
-        
-        socket.on('in-transit', (payload) => {
-            const log = {
-                event: 'in-transit',
-                time: new Date().toString().slice(0, 24),
-                info: payload.payload,
-            };
-            console.log('Event', log);
-
-        });
-        socket.on('delivered', (payload) => {
-            log.event = 'delivered';
-            console.log('Event', log);
-            delete flowersQueue.messeges[payload.id];
-        });
     });
-
+    socket.on('in-transit', (payload) => {
+        const log = {
+            event: 'in-transit',
+            time: new Date().toString().slice(0, 24),
+            info: payload.payload,
+        };
+        console.log('Event', log);
+    });
+    socket.on('delivered', (payload) => {
+        const log = {
+            event: 'delivered',
+            time: new Date().toString().slice(0, 24),
+            info: payload.payload,
+        };
+        log.event = 'delivered';
+        console.log('Event', log);
+        delete flowersQueue.messeges[payload.id];
+    });
 
     socket.on("widgetsOrder", payload => {
         const id = uuid();
@@ -55,7 +57,6 @@ caps.on("connection", (socket) => {
         };
         console.log('Event', log);
         caps.emit('pickup', { id: id, payload: widgetsQueue.messeges[id] });
-
         socket.on('in-transit', (payload) => {
             const log = {
                 event: 'in-transit',
